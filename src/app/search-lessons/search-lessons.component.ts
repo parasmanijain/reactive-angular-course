@@ -1,27 +1,5 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  OnInit,
-  ViewChild,
-} from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { Course } from "../model/course";
-import {
-  debounceTime,
-  distinctUntilChanged,
-  startWith,
-  tap,
-  delay,
-  map,
-  concatMap,
-  switchMap,
-  withLatestFrom,
-  concatAll,
-  shareReplay,
-} from "rxjs/operators";
-import { merge, fromEvent, Observable, concat } from "rxjs";
+import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
+import { Observable } from "rxjs";
 import { Lesson } from "../model/lesson";
 import { CoursesService } from "../services/courses.service";
 
@@ -33,9 +11,8 @@ import { CoursesService } from "../services/courses.service";
   standalone: false,
 })
 export class SearchLessonsComponent implements OnInit {
-  searchResults$: Observable<Lesson[]>;
-
-  activeLesson: Lesson;
+  searchResults$!: Observable<Lesson[]>;
+  activeLesson!: Lesson | null;
 
   constructor(private coursesService: CoursesService) {}
 

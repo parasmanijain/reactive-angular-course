@@ -1,13 +1,10 @@
-import { AfterViewInit, Component, Inject } from "@angular/core";
+import { Component, inject, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Course } from "../model/course";
 import { FormBuilder, Validators, FormGroup } from "@angular/forms";
 import moment from "moment";
-import { CoursesService } from "../services/courses.service";
 import { LoadingService } from "../loading/loading.service";
 import { MessagesService } from "../messages/messages.service";
-import { throwError } from "rxjs";
-import { catchError } from "rxjs/operators";
 import { CoursesStore } from "../services/courses.store";
 
 @Component({
@@ -20,22 +17,18 @@ import { CoursesStore } from "../services/courses.store";
 export class CourseDialogComponent {
   form: FormGroup;
 
-  course: Course;
+  course = inject<Course>(MAT_DIALOG_DATA);
 
   constructor(
-    private fb: FormBuilder,
+    fb: FormBuilder,
     private dialogRef: MatDialogRef<CourseDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) course: Course,
     private coursesStore: CoursesStore,
-    private messagesService: MessagesService,
   ) {
-    this.course = course;
-
     this.form = fb.group({
-      description: [course.description, Validators.required],
-      category: [course.category, Validators.required],
+      description: [this.course.description, Validators.required],
+      category: [this.course.category, Validators.required],
       releasedAt: [moment(), Validators.required],
-      longDescription: [course.longDescription, Validators.required],
+      longDescription: [this.course.longDescription, Validators.required],
     });
   }
 

@@ -9,7 +9,7 @@ import { Lesson } from "../model/lesson";
 })
 export class LessonComponent implements OnInit {
   @Input()
-  lesson: Lesson;
+  lesson!: Lesson;
 
   constructor() {}
 
