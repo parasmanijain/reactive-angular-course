@@ -1,6 +1,9 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
-    "lib": ["es2017"]
+    "lib": ["es2017"],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   }
 }

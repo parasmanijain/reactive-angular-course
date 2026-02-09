@@ -1,6 +1,13 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {Course} from '../model/course';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
+import { Course } from "../model/course";
 import {
   debounceTime,
   distinctUntilChanged,
@@ -11,57 +18,38 @@ import {
   concatMap,
   switchMap,
   withLatestFrom,
-  concatAll, shareReplay
-} from 'rxjs/operators';
-import {merge, fromEvent, Observable, concat} from 'rxjs';
-import {Lesson} from '../model/lesson';
-import {CoursesService} from '../services/courses.service';
-
+  concatAll,
+  shareReplay,
+} from "rxjs/operators";
+import { merge, fromEvent, Observable, concat } from "rxjs";
+import { Lesson } from "../model/lesson";
+import { CoursesService } from "../services/courses.service";
 
 @Component({
-    selector: 'course',
-    templateUrl: './search-lessons.component.html',
-    styleUrls: ['./search-lessons.component.css'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: "course",
+  templateUrl: "./search-lessons.component.html",
+  styleUrls: ["./search-lessons.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SearchLessonsComponent implements OnInit {
+  searchResults$: Observable<Lesson[]>;
 
-  searchResults$ : Observable<Lesson[]>;
+  activeLesson: Lesson;
 
-  activeLesson:Lesson;
+  constructor(private coursesService: CoursesService) {}
 
-  constructor(private coursesService: CoursesService) {
+  ngOnInit() {}
 
-
+  onSearch(search: string) {
+    this.searchResults$ = this.coursesService.searchLessons(search);
   }
 
-  ngOnInit() {
-
-
+  openLesson(lesson: Lesson) {
+    this.activeLesson = lesson;
   }
 
-    onSearch(search:string) {
-        this.searchResults$  = this.coursesService.searchLessons(search);
-    }
-
-    openLesson(lesson:Lesson) {
-      this.activeLesson = lesson;
-    }
-
-    onBackToSearch() {
-      this.activeLesson = null;
-    }
-
+  onBackToSearch() {
+    this.activeLesson = null;
+  }
 }
-
-
-
-
-
-
-
-
-
-
-
