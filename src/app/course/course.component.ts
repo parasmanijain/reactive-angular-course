@@ -7,8 +7,8 @@ import { Lesson } from "../model/lesson";
 import { CoursesService } from "../services/courses.service";
 
 interface CourseData {
-  course: Course;
-  lessons: Lesson[];
+  readonly course: Course | null;
+  readonly lessons: readonly Lesson[];
 }
 
 @Component({
@@ -22,12 +22,22 @@ export class CourseComponent implements OnInit {
   data$!: Observable<CourseData>;
 
   constructor(
-    private route: ActivatedRoute,
-    private coursesService: CoursesService,
+    private readonly route: ActivatedRoute,
+    private readonly coursesService: CoursesService,
   ) {}
 
-  ngOnInit() {
-    const courseId = parseInt(this.route.snapshot.paramMap.get("courseId")!);
+  ngOnInit(): void {
+    const courseIdParam = this.route.snapshot.paramMap.get("courseId");
+
+    if (!courseIdParam) {
+      throw new Error("Course ID parameter is required");
+    }
+
+    const courseId = parseInt(courseIdParam, 10);
+
+    if (isNaN(courseId)) {
+      throw new Error("Course ID must be a valid number");
+    }
 
     const course$ = this.coursesService
       .loadCourseById(courseId)
@@ -35,16 +45,16 @@ export class CourseComponent implements OnInit {
 
     const lessons$ = this.coursesService
       .loadAllCourseLessons(courseId)
-      .pipe(startWith([]));
+      .pipe(startWith([] as readonly Lesson[]));
 
     this.data$ = combineLatest([course$, lessons$]).pipe(
-      map(([course, lessons]) => {
-        return {
+      map(
+        ([course, lessons]): CourseData => ({
           course,
           lessons,
-        };
-      }),
-      tap(console.log),
+        }),
+      ),
+      tap((data) => console.log("Course data loaded:", data)),
     );
   }
 }

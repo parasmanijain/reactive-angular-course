@@ -1,8 +1,7 @@
-import { Component, inject, Inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Course } from "../model/course";
 import { FormBuilder, Validators, FormGroup } from "@angular/forms";
-import moment from "moment";
 import { LoadingService } from "../loading/loading.service";
 import { MessagesService } from "../messages/messages.service";
 import { CoursesStore } from "../services/courses.store";
@@ -15,32 +14,31 @@ import { CoursesStore } from "../services/courses.store";
   standalone: false,
 })
 export class CourseDialogComponent {
-  form: FormGroup;
-
-  course = inject<Course>(MAT_DIALOG_DATA);
+  readonly form: FormGroup;
+  readonly course = inject<Course>(MAT_DIALOG_DATA);
 
   constructor(
-    fb: FormBuilder,
-    private dialogRef: MatDialogRef<CourseDialogComponent>,
-    private coursesStore: CoursesStore,
+    private readonly fb: FormBuilder,
+    private readonly dialogRef: MatDialogRef<CourseDialogComponent>,
+    private readonly coursesStore: CoursesStore,
   ) {
-    this.form = fb.group({
+    this.form = this.fb.group({
       description: [this.course.description, Validators.required],
       category: [this.course.category, Validators.required],
-      releasedAt: [moment(), Validators.required],
+      releasedAt: [new Date(), Validators.required],
       longDescription: [this.course.longDescription, Validators.required],
     });
   }
 
-  save() {
-    const changes = this.form.value;
+  save(): void {
+    const changes = this.form.value as Partial<Course>;
 
     this.coursesStore.saveCourse(this.course.id, changes).subscribe();
 
     this.dialogRef.close(changes);
   }
 
-  close() {
+  close(): void {
     this.dialogRef.close();
   }
 }
