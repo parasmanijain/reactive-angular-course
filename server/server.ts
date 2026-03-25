@@ -24,13 +24,22 @@ app.route("/api/login").post(loginUser);
 
 const httpServer = app.listen(9000, () => {
   const address = httpServer.address();
-  // Type guard for AddressInfo and null check
-  if (address && typeof address === "object" && "port" in address) {
+  if (address && typeof address === "object") {
     console.log(
-      "HTTP REST API Server running at http://localhost:" +
-        (address as AddressInfo).port,
+      "HTTP REST API Server running at http://localhost:" + address.port,
     );
   } else {
-    console.log("HTTP REST API Server running (port unknown)");
+    console.log("HTTP REST API Server running at http://localhost:9000");
   }
+});
+
+httpServer.on("error", (error: any) => {
+  if (error.code === "EADDRINUSE") {
+    console.error(
+      "Port 9000 is already in use. Please close other applications using this port or change the port number.",
+    );
+  } else {
+    console.error("Server error:", error);
+  }
+  process.exit(1);
 });
